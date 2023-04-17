@@ -2,7 +2,7 @@ services:
   - type: web
     name: Agora Server
     env: python
-    repo: https://github.com/tadaspetra/agora-server.git
+    repo: https://github.com/prakyath-07/agora-server
     rootDir: .
     buildCommand: pip install flask flask-cors requests gunicorn
     startCommand: gunicorn app:app
