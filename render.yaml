@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: Agora Server
+    name: HALDemo
     env: python
     repo: https://github.com/prakyath-07/agora-server
     rootDir: .

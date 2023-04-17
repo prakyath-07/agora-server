@@ -1,8 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 import json
 from flask_cors import CORS
 
-from utils import start_cloud_recording, stop_cloud_recording, start_transcription, stop_transcription
+from utils import start_cloud_recording, stop_cloud_recording, start_transcription, stop_transcription, query_cloud_recording
 
 app = Flask(__name__)
 CORS(app)
@@ -12,35 +12,44 @@ CORS(app)
 def endpoints():
     app_routes = ['/start-recording/<channel>',
                   '/stop-recording/<channel>/<sid>/<resource_id>', '/start-transcribing/<channel>', '/stop-transcribing/<task_id>/<builder_token>']
-    return json.dumps(app_routes)
+    return jsonify(app_routes)
 
 
 @app.route('/start-recording/<path:channel>', methods=['GET', 'POST'])
 def start_recording(channel):
-    resource_id, sid = start_cloud_recording(channel)
-    context = {'sid': sid, "resource_id": resource_id}
-    return json.dumps(context)
+    uid = request.args.get("uid", None)
+    project = request.args.get("project", 'agora')
+    context = start_cloud_recording(channel, uid, project)
+    return jsonify(context)
+
+@app.route('/query-recording/<path:channel>/<path:sid>', methods=['GET', 'POST'])
+def query_recording(channel, sid):
+    context = query_cloud_recording(channel, sid)
+    return jsonify(context)
 
 
-@app.route('/stop-recording/<path:channel>/<path:sid>/<path:resource_id>', methods=['GET', 'POST'])
-def stop_recording(channel, sid, resource_id):
-    data = stop_cloud_recording(channel, resource_id, sid)
-    context = {}
-    return json.dumps(data)
+@app.route('/stop-recording/<path:channel>/<path:sid>', methods=['GET', 'POST'])
+def stop_recording(channel, sid,):
+    data = stop_cloud_recording(channel, sid)
+    return jsonify(data)
+
+# @app.route('/users/<path:channel>', methods=['GET', 'POST'])
+# def users(channel):
+#     data = get_user_list(channel)
+#     return jsonify(data)
 
 
 @app.route('/start-transcribing/<path:channel>', methods=['GET', 'POST'])
 def start_transcribing(channel):
-    taskId, builderToken = start_transcription(channel)
-    context = {'taskId': taskId, 'builderToken': builderToken}
-    return json.dumps(context)
+    context = start_transcription(channel)
+    return jsonify(context)
 
 
 @app.route('/stop-transcribing/<path:task_id>/<path:builder_token>/', methods=['GET', 'POST', 'DELETE'])
 def stop_transcribing(task_id, builder_token):
     data = stop_transcription(task_id, builder_token)
     context = {}
-    return json.dumps(data)
+    return jsonify(data)
 
 
 if __name__ == '__main__':
