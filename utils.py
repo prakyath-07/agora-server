@@ -216,6 +216,7 @@ def start_transcription(channel):
 
     res = requests.post(url, headers=headers, data=json.dumps(payload))
     data = res.json()
+    print(data);
     taskID = data["taskId"]
 
     return taskID, tokenName
