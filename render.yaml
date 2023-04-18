@@ -4,7 +4,7 @@ services:
     env: python
     repo: https://github.com/prakyath-07/agora-server
     rootDir: .
-    buildCommand: pip install flask flask-cors requests gunicorn boto3
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
     envVars:
