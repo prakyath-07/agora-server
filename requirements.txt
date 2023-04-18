@@ -2,3 +2,4 @@ Flask
 Gunicorn
 flask-cors
 requests
+boto3
