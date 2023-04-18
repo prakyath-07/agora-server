@@ -53,7 +53,6 @@ def generate_resource(channel):
     res = requests.post(url, headers=headers, data=json.dumps(payload))
 
     data = res.json()
-    resourceId = data["resourceId"]
 
     return data
 
