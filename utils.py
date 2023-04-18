@@ -136,7 +136,7 @@ def query_cloud_recording(channel, sid):
     if 'serverResponse' not in data or len(data['serverResponse']['fileList']) == 0:
         return {'success': False, 'message': "Parsing Failed", 'server_response': data, 'channel': channel}
 
-    return {'status': True, "fileList": data['serverResponse']['fileList'], "status": data['serverResponse']['status'], 'sid': sid}
+    return {'success': True, "fileList": data['serverResponse']['fileList'], "status": data['serverResponse']['status'], 'sid': sid}
 
 
 def stop_cloud_recording(channel, sid):
@@ -169,7 +169,7 @@ def stop_cloud_recording(channel, sid):
     mp4_link = server_response['fileList'][0]['fileName']
     m3u8_link = server_response['fileList'][1]['fileName']
 
-    formatted_data = {'resource_id': resource_id, 'sid': sid,
+    formatted_data = {'success': True, 'resource_id': resource_id, 'sid': sid,
                       'mp4_link': mp4_link, 'm3u8_link': m3u8_link, 'signed_mp4_link': create_presigned_url(mp4_link)}
 
     return formatted_data
