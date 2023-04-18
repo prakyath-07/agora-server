@@ -3,6 +3,7 @@ import requests
 import json
 import random
 import os
+import boto3
 
 CUSTOMER_KEY = os.getenv('CUSTOMER_KEY')
 CUSTOMER_SECRET = os.getenv('CUSTOMER_SECRET')
@@ -16,6 +17,7 @@ RESOURCE_ID = None
 SECRET_KEY = os.getenv('SECRET_KEY')
 ACCESS_KEY = os.getenv('ACCESS_KEY')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
+
 
 def generate_credential():
     # Generate encoded token based on customer key and secret
@@ -55,6 +57,7 @@ def generate_resource(channel):
 
     return data
 
+
 def start_cloud_recording(channel, uid, project):
     global UID
     global RESOURCE_ID
@@ -73,7 +76,7 @@ def start_cloud_recording(channel, uid, project):
 
             "recordingConfig": {
                 "maxIdleTime": 30,
-                "streamTypes": 2,
+                "streamTypes": 0,
                 "channelType": 0,
                 "videoStreamType": 0,
                 "subscribeUidGroup": 0
@@ -109,9 +112,12 @@ def start_cloud_recording(channel, uid, project):
 
     res = requests.post(url, headers=headers, data=json.dumps(payload))
     data = res.json()
+
+    if 'code' in data:
+        return {'success': False, 'message': "Start Failed", 'server_response': data, 'channel': channel}
     sid = data["sid"]
 
-    return {'sid': sid, "resource_id": RESOURCE_ID, 'server_response': data, "uid": str(UID), 'resource_data': resource_data}
+    return {'success': True, 'sid': sid, "resource_id": RESOURCE_ID}
 
 
 def query_cloud_recording(channel, sid):
@@ -128,7 +134,10 @@ def query_cloud_recording(channel, sid):
     res = requests.get(url, headers=headers, data=json.dumps(payload))
     data = res.json()
 
-    return {'status': True, "data": data, 'sid': sid}
+    if 'serverResponse' not in data or len(data['serverResponse']['fileList']) == 0:
+        return {'success': False, 'message': "Parsing Failed", 'server_response': data, 'channel': channel}
+
+    return {'status': True, "fileList": data['serverResponse']['fileList'], "status": data['serverResponse']['status'], 'sid': sid}
 
 
 def stop_cloud_recording(channel, sid):
@@ -162,7 +171,7 @@ def stop_cloud_recording(channel, sid):
     m3u8_link = server_response['fileList'][1]['fileName']
 
     formatted_data = {'resource_id': resource_id, 'sid': sid,
-                      'server_response': server_response, 'mp4_link': mp4_link, 'm3u8_link': m3u8_link}
+                      'mp4_link': mp4_link, 'm3u8_link': m3u8_link, 'signed_mp4_link': create_presigned_url(mp4_link)}
 
     return formatted_data
 
@@ -271,3 +280,25 @@ def stop_transcription(task_id, builder_token):
     res = requests.delete(url, headers=headers, data=payload)
     data = res.json()
     return data
+
+
+def create_presigned_url(object):
+    try:
+        key = object
+        location = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY).get_bucket_location(
+            Bucket=BUCKET_NAME)['LocationConstraint']
+        s3_client = boto3.client(
+            's3',
+            region_name=location,
+            aws_access_key_id=ACCESS_KEY,
+            aws_secret_access_key=SECRET_KEY,
+        )
+        url = s3_client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': BUCKET_NAME, 'Key': key, },
+            ExpiresIn=600000,
+        )
+    except Exception as e:
+        print(e)
+        return None
+    return url
