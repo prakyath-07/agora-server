@@ -5,6 +5,11 @@ import random
 import os
 import boto3
 
+import dotenv
+from dotenv import load_dotenv
+
+load_dotenv()
+
 CUSTOMER_KEY = os.getenv('CUSTOMER_KEY')
 CUSTOMER_SECRET = os.getenv('CUSTOMER_SECRET')
 
@@ -21,7 +26,7 @@ BUCKET_NAME = os.getenv('BUCKET_NAME')
 
 def generate_credential():
     # Generate encoded token based on customer key and secret
-    credentials = CUSTOMER_KEY + ":" + CUSTOMER_SECRET
+    credentials = CUSTOMER_KEY + ":" + CUSTOMER_SECRET #"{}:{}".format(CUSTOMER_KEY,CUSTOMER_SECRET)#
 
     base64_credentials = base64.b64encode(credentials.encode("utf8"))
     credential = base64_credentials.decode("utf8")
@@ -115,7 +120,7 @@ def start_cloud_recording(channel, uid, project):
     if 'code' in data:
         return {'success': False, 'message': "Start Failed", 'server_response': data, 'channel': channel}
     sid = data["sid"]
-
+    print('sid '+ sid+ " resource_id "+RESOURCE_ID)
     return {'success': True, 'sid': sid, "resource_id": RESOURCE_ID}
 
 
