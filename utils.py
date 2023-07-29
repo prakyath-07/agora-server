@@ -5,10 +5,10 @@ import random
 import os
 import boto3
 
-import dotenv
-from dotenv import load_dotenv
+# import dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 CUSTOMER_KEY = os.getenv('CUSTOMER_KEY')
 CUSTOMER_SECRET = os.getenv('CUSTOMER_SECRET')
