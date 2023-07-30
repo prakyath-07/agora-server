@@ -65,6 +65,7 @@ def generate_resource(channel):
 def start_cloud_recording(channel,temp_token, uid, project):
     global UID
     global RESOURCE_ID
+    
     # if uid is not None:
     #     UID = uid
     resource_data = generate_resource(channel)
@@ -76,7 +77,7 @@ def start_cloud_recording(channel,temp_token, uid, project):
         "cname": channel,
         "uid": UID,
         "clientRequest": {
-            "token": temp_token,
+            "token": TEMP_TOKEN,
 
             "recordingConfig": {
                 "maxIdleTime": 30,
