@@ -19,7 +19,8 @@ def endpoints():
 def start_recording(channel):
     uid = request.args.get("uid", None)
     project = request.args.get("project", 'agora')
-    context = start_cloud_recording(channel, uid, project)
+    temp_token = request.args.get("temp_token", 'agora')
+    context = start_cloud_recording(channel,temp_token, uid, project)
     return jsonify(context)
 
 @app.route('/query-recording/<path:channel>/<path:sid>', methods=['GET', 'POST'])
