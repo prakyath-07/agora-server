@@ -89,7 +89,8 @@ def start_cloud_recording(channel,temp_token, uid, project):
                     "width": 1280,
                     "height":720,
                     "fps": 30,
-                    "bitrate": 1710
+                    "bitrate": 1710,
+                    "mixedVideoLayout":2
                 }
             },
 
