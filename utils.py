@@ -84,7 +84,11 @@ def start_cloud_recording(channel,temp_token, uid, project):
                 "streamTypes": 2,
                 "channelType": 0,
                 "videoStreamType": 0,
-                "subscribeUidGroup": 0
+                "subscribeUidGroup": 0,
+                "transcodingConfig": {
+                    "width": 1280,
+                    "height":720
+                }
             },
 
             "storageConfig": {
