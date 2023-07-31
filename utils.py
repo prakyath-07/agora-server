@@ -81,7 +81,7 @@ def start_cloud_recording(channel,temp_token, uid, project):
 
             "recordingConfig": {
                 "maxIdleTime": 30,
-                "streamTypes": 0,
+                "streamTypes": 2,
                 "channelType": 0,
                 "videoStreamType": 0,
                 "subscribeUidGroup": 0
