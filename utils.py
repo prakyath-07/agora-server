@@ -87,7 +87,9 @@ def start_cloud_recording(channel,temp_token, uid, project):
                 "subscribeUidGroup": 0,
                 "transcodingConfig": {
                     "width": 1280,
-                    "height":720
+                    "height":720,
+                    "fps": 30,
+                    "bitrate": 1710
                 }
             },
 
